@@ -1,0 +1,4 @@
+PyKakao
+konlpy
+pandas
+jpype1
