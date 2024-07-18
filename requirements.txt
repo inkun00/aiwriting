@@ -2,3 +2,4 @@ PyKakao
 konlpy
 pandas
 jpype1
+soyspacing
