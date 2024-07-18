@@ -1,22 +1,17 @@
-import jpype
-import os
 import streamlit as st
 from PyKakao import KoGPT
-from konlpy.tag import Okt
 import pandas as pd
+from soyspacing.countbase import RuleDict, CountSpace
 
-# JVM 초기화 함수
-def initialize_jvm():
-    konlpy_java_path = os.path.join(os.path.dirname(__file__), "C:\\Python\\lib\\site-packages\\konlpy\\java\\*")
-    if not jpype.isJVMStarted():
-        jpype.startJVM(jpype.getDefaultJVMPath(), f'-Djava.class.path={konlpy_java_path}', '-ea')
+# 모델 초기화
+model = CountSpace()
 
-# JVM 초기화
-initialize_jvm()
+# 규칙 사전 초기화 (필요 시)
+# rule_dict = RuleDict()
+# rule_dict.load_txt('path_to_rule_file.txt')
 
 # KoGPT API 키 설정
 api = KoGPT(service_key="4fc12938380daae98223c2e26db8e3cd")
-okt = Okt()
 
 # 금칙어 데이터 로드
 @st.cache_data
@@ -59,7 +54,8 @@ if st.button("생성 시작"):
                 st.success("문장 생성 완료!")
                 st.text_area("생성된 문장", complete_text, height=300)
 
-                nouns = okt.nouns(complete_text)
-                st.write("추출된 명사:", ', '.join(nouns))
+                # 띄어쓰기 수정
+                fixed_text, tags = model.correct(complete_text)
+                st.write("수정된 문장:", fixed_text)
     else:
         st.warning("문장을 입력하세요.")
